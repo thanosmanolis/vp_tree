@@ -2,7 +2,11 @@
 CC = gcc-7
 
 all:
-	cd src; gcc -o ../sequential vptree_sequential.c main.c -lm; cd ..
-	cd src; gcc -o ../pthreads vptree_pthreads.c main.c -pthread -lm; cd ..
-	cd src; gcc -o ../cilk vptree_cilk.c main.c -fcilkplus -lm; cd ..
-	cd src; gcc -o ../openmp vptree_openmp.c main.c -fopenmp -lm; cd ..
+	cd src; $(CC) -o ../sequential vptree_sequential.c main.c -lm; cd ..
+	./sequential
+	cd src; $(CC) -o ../pthreads vptree_pthreads.c main.c -lm -pthread; cd ..
+	./pthreads
+	cd src; $(CC) -o ../cilk vptree_cilk.c main.c -lm -fcilkplus; cd ..
+	./cilk
+	cd src; $(CC) -o ../openmp vptree_openmp.c main.c -lm -fopenmp; cd ..
+	./openmp

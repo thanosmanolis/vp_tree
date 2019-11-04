@@ -43,8 +43,7 @@ vptree * buildvp(double *X, int n, int d)
 
     //! Initialize data
     for(int i=0; i<n; i++)
-        for(int j=0; j<d; j++)
-            *(idx_list + i) = i;
+        *(idx_list + i) = i;
 
     vptree *T;
 
@@ -142,24 +141,25 @@ vptree * buildvp_recursive(double *X, int n, int d, int *idx_list)
 
                     outer_counter++;
                 }
-            if(n>1000)
+            if(omp_get_active_level()<5)
             {
-                if(omp_get_active_level()<5)
-                    #pragma omp parallel
-                        #pragma omp single
-                        {
-                            vptree *temp1, *temp2;
-                            temp1 = malloc(sizeof(vptree));
-                            temp2 = malloc(sizeof(vptree));
+                #pragma omp parallel
+                {
+                    #pragma omp single
+                    {
+                        vptree *temp1, *temp2;
+                        temp1 = malloc(sizeof(vptree));
+                        temp2 = malloc(sizeof(vptree));
 
-                            #pragma omp task shared(temp1)
-                            temp1 = buildvp_recursive(inner, inner_n, d, inner_idx);
-                            #pragma omp task shared(temp2)
-                            temp2 = buildvp_recursive(outer, outer_n, d, outer_idx);
-                            #pragma omp taskwait
-                            T->inner = temp1;
-                            T->outer = temp2;
-                        }
+                        #pragma omp task shared(temp1)
+                        temp1 = buildvp_recursive(inner, inner_n, d, inner_idx);
+                        #pragma omp task shared(temp2)
+                        temp2 = buildvp_recursive(outer, outer_n, d, outer_idx);
+                        #pragma omp taskwait
+                        T->inner = temp1;
+                        T->outer = temp2;
+                    }
+                }
             }else
             {
                 T->inner = buildvp_recursive(inner, inner_n, d, inner_idx);

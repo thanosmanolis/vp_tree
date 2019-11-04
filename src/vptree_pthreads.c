@@ -9,7 +9,7 @@ typedef struct vptree vptree;
 typedef struct dist_thread dist_thread;
 typedef struct tree_thread tree_thread;
 
-int activeThreads = 0, maxThreads = 62;
+int activeThreads = 0, maxThreads = 20;
 
 pthread_mutex_t mux;
 
@@ -44,7 +44,7 @@ static void* calcDistances(void* inp)
     pthread_exit(NULL);
 }
 
-static void* calcOuter(void* inp)
+static void* calcSubTree(void* inp)
 {
     pthread_mutex_lock (&mux);
     activeThreads ++;
@@ -69,8 +69,7 @@ vptree * buildvp(double *X, int n, int d)
 
     //! Initialize data
     for(int i=0; i<n; i++)
-        for(int j=0; j<d; j++)
-            *(idx_list + i) = i;
+        *(idx_list + i) = i;
 
     vptree *T;
 
@@ -104,14 +103,13 @@ vptree * buildvp_recursive(double *X, int n, int d, int *idx_list)
     {
         double *dist = malloc((n-1)*sizeof(double));
 
+        //! Number of threads to use, if done parallel
+        int dist_threads_num = 10;
+
         //! If n > 100000 calculate distances with Threads
         //! Ohterwise, do it sequentially
-        if(n>100000)
+        if(n>10000 && activeThreads < maxThreads - dist_threads_num)
         {
-            //! Calculate number of threads to use
-            int step = 100*n;
-            int dist_threads_num = 10*( n + step - 1)/step;
-
             //! Initialize struct variables
             dist_thread *tun = malloc(dist_threads_num * sizeof(dist_thread));
 
@@ -207,7 +205,7 @@ vptree * buildvp_recursive(double *X, int n, int d, int *idx_list)
                     outer_counter++;
                 }
 
-            if(n>1000 && activeThreads<maxThreads-2)
+            if(n>1000 && activeThreads < maxThreads - 2)
             {
                 //! T inner
                 pthread_t thread1;
@@ -227,14 +225,14 @@ vptree * buildvp_recursive(double *X, int n, int d, int *idx_list)
                 T_outer->idx = outer_idx;
                 T_outer->X = outer;
 
-                T_inner->T = T->inner;
-                T_outer->T = T->outer;
-
-                pthread_create(&thread1, NULL, calcOuter, T_inner);
-                pthread_create(&thread2, NULL, calcOuter, T_outer);
+                pthread_create(&thread1, NULL, calcSubTree, T_inner);
+                pthread_create(&thread2, NULL, calcSubTree, T_outer);
 
                 pthread_join(thread1, NULL);
                 pthread_join(thread2, NULL);
+
+                T->inner = T_inner->T;
+                T->outer = T_outer->T;
 
                 free(T_inner);
                 free(T_outer);

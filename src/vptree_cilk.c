@@ -18,8 +18,7 @@ vptree * buildvp(double *X, int n, int d)
 
     //! Initialize data
     for(int i=0; i<n; i++)
-        for(int j=0; j<d; j++)
-            *(idx_list + i) = i;
+        *(idx_list + i) = i;
 
     vptree *T;
 
