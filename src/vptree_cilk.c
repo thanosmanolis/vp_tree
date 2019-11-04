@@ -1,8 +1,12 @@
 /*
-*************************************
-*    Vantage Point Tree Sequential  *
-*************************************
+***************************************************
+*    @file   vptree_cilc.c                        *
+*    @author Thanos Manolis                       *
+*    @brief  Vantage-Point Tree Implementation    *
+*            with Cilk                            *
+***************************************************
 */
+
 #include <cilk/cilk.h>
 #include <cilk/cilk_api.h>
 

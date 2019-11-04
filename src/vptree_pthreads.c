@@ -1,8 +1,12 @@
 /*
-*************************************
-*    Vantage Point Tree Sequential  *
-*************************************
+***************************************************
+*    @file   vptree_pthreads.c                    *
+*    @author Thanos Manolis                       *
+*    @brief  Vantage-Point Tree Implementation    *
+*            with Pthreads                        *
+***************************************************
 */
+
 #include "../inc/vptree.h"
 
 typedef struct vptree vptree;

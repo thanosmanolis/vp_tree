@@ -1,8 +1,12 @@
 /*
-*************************************
-*    Vantage Point Tree Sequential  *
-*************************************
+***************************************************
+*    @file   vptree_openmp.c                      *
+*    @author Thanos Manolis                       *
+*    @brief  Vantage-Point Tree Implementation    *
+*            with OpenMP                          *
+***************************************************
 */
+
 #include <omp.h>
 #include "../inc/vptree.h"
 
