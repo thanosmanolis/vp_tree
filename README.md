@@ -7,5 +7,6 @@ There are 4 different implementations. One sequential, and three in parallel (us
 
 ## How to run it
 
-1. Change gcc to your version (type "gcc --version" to see)
-2. Just type "make" in the terminal. The Makefile will compile and run all the executables
+1. If your gcc version is previous than gcc-7, then change it in the Makefile
+2. Type "make lib" so that the Makefile produces four libraries, one for each implementation
+3. Use those files along with inc/vptree.h at your own Makefile, with your main function, to produce executable files.
